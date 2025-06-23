@@ -1,7 +1,11 @@
 import AddPlantForm from '../../../components/Form/AddPlantForm'
 import { imageUpload } from '../../../API/Utils';
+import axios from 'axios';
+import { useContext } from 'react';
+import { AuthContext } from '../../../providers/AuthProvider';
 
 const AddPlant = () => {
+  const {user} = useContext(AuthContext);
 
   const handleFormSubmit = async(e) => {
     e.preventDefault()
@@ -20,10 +24,18 @@ const AddPlant = () => {
       description, 
       price, 
       quantity, 
-      image: imageUrl
+      image: imageUrl,
+      seller : {
+        name: user?.displayName,
+        email: user?.email,
+      }
     }
 
     console.table(plantData)
+
+    const {data} = await axios.post(`${import.meta.env.VITE_API_URL}/add-plant`, plantData)
+
+    console.log(data);
 
   }
 
