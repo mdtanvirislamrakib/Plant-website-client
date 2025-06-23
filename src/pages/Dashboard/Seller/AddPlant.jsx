@@ -10,6 +10,8 @@ const AddPlant = () => {
 
 
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState('')
 
   const handleFormSubmit = async (e) => {
     e.preventDefault()
@@ -21,17 +23,16 @@ const AddPlant = () => {
     const description = form?.description?.value;
     const price = form?.price?.value;
     const quantity = form?.quantity?.value;
-    const image = form?.image?.files[0];
+    // const image = form?.image?.files[0];
 
     try {
-      const imageUrl = await imageUpload(image)
       const plantData = {
         name,
         category,
         description,
         price,
         quantity,
-        image: imageUrl,
+        image: uploadingImage,
         seller: {
           name: user?.displayName,
           email: user?.email,
@@ -56,10 +57,31 @@ const AddPlant = () => {
 
   }
 
+
+  const handleImageUpload = async e => {
+    e.preventDefault();
+    try {
+      const image = e.target.files[0];
+      const imageUrl = await imageUpload(image)
+      setUploadingImage(imageUrl)
+    } catch (error) {
+      setImageUploadError("Image not uploading!!")
+      console.log(error);
+    }
+
+  }
+
+
   return (
     <div>
       {/* Form */}
-      <AddPlantForm handleFormSubmit={handleFormSubmit} isUploading={isUploading} />
+      <AddPlantForm
+        handleFormSubmit={handleFormSubmit}
+        isUploading={isUploading}
+        uploadingImage={uploadingImage}
+        handleImageUpload={handleImageUpload}
+        imageUploadError={imageUploadError}
+      />
     </div>
   )
 }

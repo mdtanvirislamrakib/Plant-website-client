@@ -1,4 +1,4 @@
-const AddPlantForm = ({ handleFormSubmit, isUploading }) => {
+const AddPlantForm = ({ handleFormSubmit, isUploading, uploadingImage, handleImageUpload, imageUploadError }) => {
   return (
     <div className='w-full min-h-[calc(100vh-40px)] flex flex-col justify-center items-center text-gray-800 rounded-xl bg-gray-50'>
       <form onSubmit={handleFormSubmit}>
@@ -87,6 +87,7 @@ const AddPlantForm = ({ handleFormSubmit, isUploading }) => {
                 <div className='flex flex-col w-max mx-auto text-center'>
                   <label>
                     <input
+                      onChange={handleImageUpload}
                       className='text-sm cursor-pointer w-36 hidden'
                       type='file'
                       name='image'
@@ -98,6 +99,14 @@ const AddPlantForm = ({ handleFormSubmit, isUploading }) => {
                       Upload
                     </div>
                   </label>
+
+                  {
+                    uploadingImage && <img src={uploadingImage} alt="" />
+                  }
+
+                  {
+                    imageUploadError && <p className="text-red-600 font-semibold">{imageUploadError}</p>
+                  }
                 </div>
               </div>
             </div>
