@@ -2,11 +2,11 @@ import { Link } from 'react-router'
 
 const Card = ({plant}) => {
 
-  const {name, category, description, price, quantity, image} = plant
+  const {_id, name, category, description, price, quantity, image} = plant
 
   return (
     <Link
-      to={`/plant/1`}
+      to={`/plant/${_id}`}
       className='col-span-1 cursor-pointer group shadow-xl p-3 rounded-xl'
     >
       <div className='flex flex-col gap-2 w-full'>
