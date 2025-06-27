@@ -2,6 +2,20 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../providers/AuthProvider'
 import Swal from 'sweetalert2';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from '../Form/CheckoutForm/CheckoutForm';
+
+
+
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+
+// published stripe key ==>> pk_test_51ReKbrIros3mgqZXEpNfcjIYhCTfhnVb13KUycpM38F0QbNT79drtRZ7VOwqZFK5SCkPMxgfPUr9gOhawF8hFUPl006yn69M3l
+
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY)
+
 
 const PurchaseModal = ({ closeModal, isOpen, plant }) => {
 
@@ -74,9 +88,6 @@ const PurchaseModal = ({ closeModal, isOpen, plant }) => {
 
 
 
-  const showOrderData = () => {
-    console.log("Order Data", orderData);
-  }
 
 
   return (
@@ -132,7 +143,14 @@ const PurchaseModal = ({ closeModal, isOpen, plant }) => {
             <div className='mt-2'>
               <p className='text-sm text-gray-500'>Total Price: {totalPrice}</p>
             </div>
-            <button onClick={showOrderData} className='px-3 py-1 border'>Order Now</button>
+
+            {/* Stripe checkout form */}
+
+            <Elements stripe={stripePromise}>
+              <CheckoutForm totalPrice = {totalPrice} />
+            </Elements>
+
+
           </DialogPanel>
         </div>
       </div>
