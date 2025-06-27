@@ -2,15 +2,16 @@ import Container from '../../components/Shared/Container'
 import Heading from '../../components/Shared/Heading'
 import Button from '../../components/Shared/Button/Button'
 import PurchaseModal from '../../components/Modal/PurchaseModal'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useLoaderData } from 'react-router'
+import { AuthContext } from '../../providers/AuthProvider'
 
 const PlantDetails = () => {
   let [isOpen, setIsOpen] = useState(false)
 
-  const plant = useLoaderData()
-  console.log(plant);
-  const {_id, name, category, description, price, quantity, image, seller} = plant
+  const { user } = useContext(AuthContext)
+  const plant = useLoaderData();
+  const { _id, name, category, description, price, quantity, image, seller } = plant
 
   const closeModal = () => {
     setIsOpen(false)
@@ -83,12 +84,20 @@ const PlantDetails = () => {
           <div className='flex justify-between'>
             <p className='font-bold text-3xl text-gray-500'>Price: {price}$</p>
             <div>
-              <Button onClick={() => setIsOpen(true)} label='Purchase' />
+              <Button
+                disabled={!user}
+                onClick={() => setIsOpen(true)}
+                label={user ? "Purchase" : "login to Purchase"}
+              />
             </div>
           </div>
           <hr className='my-6' />
 
-          <PurchaseModal closeModal={closeModal} isOpen={isOpen} />
+          <PurchaseModal
+            disabled={!user}
+            closeModal={closeModal}
+            isOpen={isOpen} plant={plant}
+          />
         </div>
       </div>
     </Container>

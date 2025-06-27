@@ -1,7 +1,83 @@
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useContext, useEffect, useState } from 'react'
+import { AuthContext } from '../../providers/AuthProvider'
+import Swal from 'sweetalert2';
 
-const PurchaseModal = ({ closeModal, isOpen }) => {
+const PurchaseModal = ({ closeModal, isOpen, plant }) => {
+
+  const { user } = useContext(AuthContext);
+
   // Total Price Calculation
+  const { _id, name, category, price, quantity, seller, image } = plant
+
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(price)
+  const [orderData, setOrderData] = useState({
+    customer: {
+      name: user?.displayName,
+      email: user?.email,
+      image: user?.photoURL
+    },
+    seller,
+    plantId: _id,
+    quantity: 1,
+    price: price,
+    plantName: name,
+    plantCategory: category,
+    plantImage: image,
+
+  })
+
+  useEffect(() => {
+    if (user) {
+      setOrderData(prev => {
+        return {
+          ...prev,
+          customer: {
+            name: user?.displayName,
+            email: user?.email,
+            image: user?.photoURL
+          }
+        }
+      })
+    }
+
+  }, [user])
+
+
+  const handleQuantity = value => {
+    const totalQuantity = parseInt(value);
+
+    if (totalQuantity > quantity) {
+      return Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You can't added more your available quantity!",
+      });
+    }
+
+    const calculatedPrice = totalQuantity * price || 0;
+
+    setSelectedQuantity(totalQuantity);
+    setTotalPrice(calculatedPrice)
+
+    setOrderData(prev => {
+      return {
+        ...prev,
+        price: calculatedPrice,
+        quantity: totalQuantity,
+      }
+    })
+  }
+
+
+
+
+
+  const showOrderData = () => {
+    console.log("Order Data", orderData);
+  }
+
 
   return (
     <Dialog
@@ -23,21 +99,40 @@ const PurchaseModal = ({ closeModal, isOpen }) => {
               Review Info Before Purchase
             </DialogTitle>
             <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Plant: Money Plant</p>
+              <p className='text-sm text-gray-500'>Plant: {name}</p>
             </div>
             <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Category: Indoor</p>
+              <p className='text-sm text-gray-500'>Category: {category}</p>
             </div>
             <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Customer: PH</p>
+              <p className='text-sm text-gray-500'>Customer: {user?.displayName}</p>
             </div>
 
             <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Price: $ 120</p>
+              <p className='text-sm text-gray-500'>Price: $ {price}</p>
             </div>
             <div className='mt-2'>
-              <p className='text-sm text-gray-500'>Available Quantity: 5</p>
+              <p className='text-sm text-gray-500'>Available Quantity: {quantity}</p>
             </div>
+
+            <hr className='mt-2' />
+            <p className='text-lg text-center font-bold'>Order Info</p>
+            <div className='mt-2'>
+              <input
+                value={selectedQuantity}
+                onChange={e => handleQuantity(e.target.value)}
+                type="number"
+                min={1}
+                className='border rounded-sm px-3 py-1 outline-none w-full'
+                placeholder='Quantity' />
+            </div>
+            <div className='mt-2'>
+              <p className='text-sm text-gray-500'>Selected Quantity: {selectedQuantity}</p>
+            </div>
+            <div className='mt-2'>
+              <p className='text-sm text-gray-500'>Total Price: {totalPrice}</p>
+            </div>
+            <button onClick={showOrderData} className='px-3 py-1 border'>Order Now</button>
           </DialogPanel>
         </div>
       </div>
