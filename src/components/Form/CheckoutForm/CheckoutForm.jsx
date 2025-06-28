@@ -3,8 +3,12 @@ import React, { useEffect, useState } from 'react';
 import "./common.css"
 import { FadeLoader } from 'react-spinners';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import useAuth from '../../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const CheckoutForm = ({ totalPrice, closeModal, orderData }) => {
+
+    const { user } = useAuth();
 
     const axiosSecure = useAxiosSecure();
     const [paymentError, setPaymentError] = useState(null);
@@ -18,11 +22,11 @@ const CheckoutForm = ({ totalPrice, closeModal, orderData }) => {
         const getClientSEcret = async () => {
 
             // server request....
-            const {data} = await axiosSecure.post("/create-payment-intent", {
+            const { data } = await axiosSecure.post("/create-payment-intent", {
                 quantity: orderData?.quantity,
                 plantId: orderData?.plantId
             })
-            console.log(data);
+            setClientSecret(data?.clientSecret)
 
 
         }
@@ -63,6 +67,43 @@ const CheckoutForm = ({ totalPrice, closeModal, orderData }) => {
             console.log('[PaymentMethod]', paymentMethod);
             setPaymentError(null)
         }
+
+        const result = await stripe
+            .confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: card,
+                    billing_details: {
+                        name: user?.displayName,
+                        email: user?.email
+                    },
+                },
+            })
+
+        if (result?.error) {
+            return setPaymentError(result?.error?.message)
+
+        }
+
+        if (result?.paymentIntent?.status === "succeeded") {
+            // save order data in DB
+            orderData.transctionId = result?.paymentIntent?.id;
+            try {
+                const { data } = await axiosSecure.post("/order", orderData)
+                console.log(data);
+                if (data?.insertedId) {
+                    toast.success("Order Place Successfully")
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setProcessing(false)
+                setPaymentError(null)
+                closeModal()
+            }
+
+            // update product quantity in db form plant collection
+        }
+
     };
 
     return (
