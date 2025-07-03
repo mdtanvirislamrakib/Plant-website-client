@@ -17,7 +17,7 @@ import CheckoutForm from '../Form/CheckoutForm/CheckoutForm';
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PK_KEY)
 
 
-const PurchaseModal = ({ closeModal, isOpen, plant }) => {
+const PurchaseModal = ({ closeModal, isOpen, plant, fetchPlant }) => {
 
   const { user } = useContext(AuthContext);
 
@@ -147,7 +147,7 @@ const PurchaseModal = ({ closeModal, isOpen, plant }) => {
             {/* Stripe checkout form */}
 
             <Elements stripe={stripePromise}>
-              <CheckoutForm totalPrice = {totalPrice} closeModal = {closeModal} orderData ={ orderData} />
+              <CheckoutForm totalPrice = {totalPrice} closeModal = {closeModal} orderData ={ orderData} fetchPlant={fetchPlant} />
             </Elements>
 
 

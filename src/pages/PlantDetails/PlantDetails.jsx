@@ -2,26 +2,45 @@ import Container from '../../components/Shared/Container'
 import Heading from '../../components/Shared/Heading'
 import Button from '../../components/Shared/Button/Button'
 import PurchaseModal from '../../components/Modal/PurchaseModal'
-import { useContext, useState } from 'react'
-import { useLoaderData } from 'react-router'
-import { AuthContext } from '../../providers/AuthProvider'
+import {  useState } from 'react'
+import { useParams } from 'react-router'
 import useRole from '../../hooks/useRole'
 import LoadingSpinner from '../../components/Shared/LoadingSpinner'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import useAuth from '../../hooks/useAuth'
 
 const PlantDetails = () => {
-  let [isOpen, setIsOpen] = useState(false)
 
-  const [role, isRoleLoading] = useRole();
+  const { id } = useParams()
+  const { user } = useAuth()
+  const [role, isRoleLoading] = useRole()
 
-  const { user } = useContext(AuthContext)
-  const plant = useLoaderData();
-  const { _id, name, category, description, price, quantity, image, seller } = plant
+  const {
+    data: plant,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ['plant', id],
+    queryFn: async () => {
+      const { data } = await axios(
+        `${import.meta.env.VITE_API_URL}/plant/${id}`
+      )
+      return data
+    },
+  })
+
+  const [isOpen, setIsOpen] = useState(false)
+
+  if (!plant || typeof plant !== 'object') return <p>Sorry bro</p>
+  const { name, description, category, quantity, price, _id, seller, image } =
+    plant || {}
 
   const closeModal = () => {
     setIsOpen(false)
   }
 
-  if(isRoleLoading) return <LoadingSpinner></LoadingSpinner>
+  if (isRoleLoading || isLoading) return <LoadingSpinner />
   return (
     <Container>
       <div className='mx-auto flex flex-col lg:flex-row justify-between w-full gap-12'>
@@ -102,6 +121,7 @@ const PlantDetails = () => {
             disabled={!user}
             closeModal={closeModal}
             isOpen={isOpen} plant={plant}
+            fetchPlant={refetch}
           />
         </div>
       </div>
