@@ -12,7 +12,13 @@ import { Link } from 'react-router'
 import SellerMenu from './Menu/SellerMenu'
 import CustomerMenu from './Menu/CustomerMenu'
 import logo from '../../../assets/images/logo-flat.png'
+import useRole from '../../../hooks/useRole'
+import LoadingSpinner from '../../Shared/LoadingSpinner'
 const Sidebar = () => {
+  const [role, isRoleLoading] = useRole()
+  console.log(role, isRoleLoading);
+
+
   const { logOut } = useAuth()
   const [isActive, setActive] = useState(false)
 
@@ -20,6 +26,8 @@ const Sidebar = () => {
   const handleToggle = () => {
     setActive(!isActive)
   }
+
+  if (isRoleLoading) return <LoadingSpinner></LoadingSpinner>
   return (
     <>
       {/* Small Screen Navbar */}
@@ -48,9 +56,8 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`z-10 md:fixed flex flex-col justify-between overflow-x-hidden bg-gray-100 w-64 space-y-6 px-2 py-4 absolute inset-y-0 left-0 transform ${
-          isActive && '-translate-x-full'
-        }  md:translate-x-0  transition duration-200 ease-in-out`}
+        className={`z-10 md:fixed flex flex-col justify-between overflow-x-hidden bg-gray-100 w-64 space-y-6 px-2 py-4 absolute inset-y-0 left-0 transform ${isActive && '-translate-x-full'
+          }  md:translate-x-0  transition duration-200 ease-in-out`}
       >
         <div>
           <div>
@@ -71,15 +78,22 @@ const Sidebar = () => {
           <div className='flex flex-col justify-between flex-1 mt-6'>
             <nav>
               {/*  Menu Items */}
-              <CustomerMenu />
-              <SellerMenu />
+              {role === "customer" && <CustomerMenu />}
+              {role === "seller" && <SellerMenu />}
 
-              <MenuItem
-                icon={BsGraphUp}
-                label='Statistics'
-                address='/dashboard'
-              />
-              <AdminMenu />
+
+              {role === "admin" && <>
+                <MenuItem
+                  icon={BsGraphUp}
+                  label='Statistics'
+                  address='/dashboard'
+                />
+                {role === "admin" && <AdminMenu />}
+
+              </>}
+
+
+
             </nav>
           </div>
         </div>
