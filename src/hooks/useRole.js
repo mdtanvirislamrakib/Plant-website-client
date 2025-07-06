@@ -12,9 +12,16 @@ const useRole = () => {
 
     useEffect(() => {
         const fetchUserRole = async () => {
-            const { data } = await axiosSecure.get(`${import.meta.env.VITE_API_URL}/user/role/${user?.email}`)
-            setRole(data?.role)
-            setIsRoleLoading(false)
+            if(!user) return setIsRoleLoading(false)
+            try {
+                const { data } = await axiosSecure.get(`${import.meta.env.VITE_API_URL}/user/role/${user?.email}`)
+                setRole(data?.role)
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsRoleLoading(false)
+            }
+
         }
         fetchUserRole();
 
