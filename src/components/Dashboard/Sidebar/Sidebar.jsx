@@ -81,16 +81,16 @@ const Sidebar = () => {
               {role === "customer" && <CustomerMenu />}
               {role === "seller" && <SellerMenu />}
 
-
               {role === "admin" && <>
+                <AdminMenu />
                 <MenuItem
                   icon={BsGraphUp}
                   label='Statistics'
                   address='/dashboard'
                 />
-                {role === "admin" && <AdminMenu />}
-
               </>}
+
+
 
 
 

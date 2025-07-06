@@ -1,15 +1,16 @@
 
-import { Navigate } from 'react-router'
+// import { Navigate } from 'react-router'
 import LoadingSpinner from '../components/Shared/LoadingSpinner'
 import useRole from '../hooks/useRole'
 
-const AdminRoute = ({ children }) => {
+const SellerRoute = ({ children }) => {
   const [role, isRoleLoading] = useRole();
 
+  console.log("SEller is", role);
 
   if (isRoleLoading) return <LoadingSpinner />
-  if (role === "admin") return children
+  if (role === "seller") return children
   return <Navigate to='/' />
 }
 
-export default AdminRoute
+export default SellerRoute;
