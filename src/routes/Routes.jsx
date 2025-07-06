@@ -15,6 +15,7 @@ import MyInventory from '../pages/Dashboard/Seller/MyInventory'
 import ManageOrders from '../pages/Dashboard/Seller/ManageOrders'
 import MyOrders from '../pages/Dashboard/Customer/MyOrders'
 import LoadingSpinner from '../components/Shared/LoadingSpinner'
+import AdminRoute from './AdminRoutes'
 
 export const router = createBrowserRouter([
   {
@@ -48,7 +49,9 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <PrivateRoute>
-            <Statistics />
+            <AdminRoute>
+              <Statistics />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },
@@ -72,7 +75,9 @@ export const router = createBrowserRouter([
         path: 'manage-users',
         element: (
           <PrivateRoute>
-            <ManageUsers />
+            <AdminRoute>
+              <ManageUsers />
+            </AdminRoute>
           </PrivateRoute>
         ),
       },

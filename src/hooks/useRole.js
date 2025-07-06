@@ -1,33 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import useAxiosSecure from './useAxiosSecure';
 import useAuth from './useAuth';
+import { useQuery } from '@tanstack/react-query';
 
 const useRole = () => {
 
-    const { user } = useAuth();
-    const [role, setRole] = useState(null)
-    const [isRoleLoading, setIsRoleLoading] = useState(true);
+    const { user, loading } = useAuth();
 
     const axiosSecure = useAxiosSecure();
 
-    useEffect(() => {
-        const fetchUserRole = async () => {
-            if(!user) return setIsRoleLoading(false)
-            try {
-                const { data } = await axiosSecure.get(`${import.meta.env.VITE_API_URL}/user/role/${user?.email}`)
-                setRole(data?.role)
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setIsRoleLoading(false)
-            }
 
+    const {data: role, isLoading: isRoleLoading} = useQuery({
+        queryKey: ["role", user?.email],
+        enabled: !loading && !!user?.email,
+        queryFn: async() => {
+            const { data } = await axiosSecure.get(`/user/role/${user?.email}`);
+            return data;
         }
-        fetchUserRole();
+    })
+    console.log(role, isRoleLoading);
 
-
-    }, [user, axiosSecure])
-    return [role, isRoleLoading];
+    return [role?.role, isRoleLoading];
 };
 
 export default useRole;
