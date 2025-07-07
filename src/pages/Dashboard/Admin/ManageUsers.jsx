@@ -6,7 +6,7 @@ import { axiosSecure } from '../../../hooks/useAxiosSecure';
 const ManageUsers = () => {
 
 
-  const { data: users, isLoading, refetch } = useQuery({
+  const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       const { data } = await axiosSecure.get("/all-users")
@@ -54,7 +54,7 @@ const ManageUsers = () => {
                 <tbody>
                   {
                     users.map(user => (
-                      <UserDataRow key={user?._id} user = {user} refetch = {refetch} />
+                      <UserDataRow key={user?._id} user = {user} />
                     ))
                   }
                   
