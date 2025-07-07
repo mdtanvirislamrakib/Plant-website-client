@@ -54,7 +54,7 @@ const ManageUsers = () => {
                 <tbody>
                   {
                     users.map(user => (
-                      <UserDataRow key={user?._id} user = {user} />
+                      <UserDataRow key={user?._id} user = {user} refetch = {refetch} />
                     ))
                   }
                   

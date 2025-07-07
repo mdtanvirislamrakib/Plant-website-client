@@ -1,6 +1,9 @@
-const UserDataRow = ({user}) => {
-console.log("User data row", user);
-  const {email, role, status, } = user
+import { useState } from "react"
+import UpdateUserRoleModal from "../../Modal/UpdateUserRoleModal"
+
+const UserDataRow = ({ user, refetch }) => {
+  const { email, role, status, } = user
+  let [isOpen, setIsOpen] = useState(false)
 
   return (
     <tr>
@@ -15,7 +18,7 @@ console.log("User data row", user);
       </td>
 
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
-        <span className='relative cursor-pointer inline-block px-3 py-1 font-semibold text-green-900 leading-tight'>
+        <span onClick={() => setIsOpen(true)} className='relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight cursor-pointer'>
           <span
             aria-hidden='true'
             className='absolute inset-0 bg-green-200 opacity-50 rounded-full'
@@ -23,7 +26,13 @@ console.log("User data row", user);
           <span className='relative'>Update Role</span>
         </span>
         {/* Modal */}
-        {/* <UpdateUserModal /> */}
+        <UpdateUserRoleModal
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          role={role}
+          userEmail = {email}
+          refetch = {refetch}
+        />
       </td>
     </tr>
   )
