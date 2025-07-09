@@ -47,12 +47,12 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        index: true,
+        path: "dashboard/statistics",
         element: (
           <PrivateRoute>
-            {/* <AdminRoute> */}
+            <AdminRoute>
               <Statistics />
-            {/* </AdminRoute> */}
+            </AdminRoute>
           </PrivateRoute>
         ),
       },

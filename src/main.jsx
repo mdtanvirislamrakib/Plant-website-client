@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import { RouterProvider } from 'react-router'
 import './index.css'
+import 'react-calendar/dist/Calendar.css';
 import AuthProvider from './providers/AuthProvider'
 import { router } from './routes/Routes'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
