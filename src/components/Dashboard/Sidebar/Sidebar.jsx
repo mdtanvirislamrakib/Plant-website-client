@@ -86,7 +86,7 @@ const Sidebar = () => {
                 <MenuItem
                   icon={BsGraphUp}
                   label='Statistics'
-                  address='dashboard/statistics'
+                  address='/dashboard'
                 />
               </>}
 
